@@ -1,0 +1,1 @@
+ERROR_LOAD_CONFIG_FILE =	["RemboCat", "Failed to load configuration files", 64]
