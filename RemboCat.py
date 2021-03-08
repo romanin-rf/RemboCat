@@ -3,6 +3,7 @@ import sys
 import json
 import pygame
 import random
+from threading import Thread
 import rc_config.rcb as rcb
 import rc_LanguagePack.text_main.errors as LP_TEXT_ERRORS
 # Инициализация
@@ -40,8 +41,13 @@ class cfg:
 		LOOK_FPS = cfgd["LOOK_FPS"]
 	MAX_FPS = cfgd["MAX_FPS"]
 
+class temp:
+	running_check_fps = False
+
 if "-debag" in sys.argv:
-	print(f"WINDOW:\n\tTITLE: \"{cfg.window.TITLE}\"\n\tSIZE: {cfg.window.WIDTH}x{cfg.window.HEIGHT}\nINFO:\n\tVERSION: {cfg.info.VERSION} ({cfg.info.VERSION_INT})")
+	print("-" * 70)
+	print(f"WINDOW:\n\tTITLE: \"{cfg.window.TITLE}\"\n\tSIZE: {cfg.window.WIDTH}x{cfg.window.HEIGHT}\nINFO:\n\tVERSION: {cfg.info.VERSION} ({cfg.info.VERSION_INT})\nSETTING:\n\tLOOK_FPS: {cfg.setting.LOOK_FPS}\nOTHER:\n\tMAX_FPS: {cfg.MAX_FPS}")
+	print("-" * 70)
 
 # Функции для работы
 def fps_handler(fps: float):
@@ -54,13 +60,23 @@ def fps_handler(fps: float):
 # Основа
 rc_root = pygame.display.set_mode((cfg.window.WIDTH, cfg.window.HEIGHT))
 pygame.display.set_caption(cfg.window.TITLE + " v" + str(cfg.info.VERSION))
-clock = pygame.time.Clock()
+clock = pygame.time.Clock()		
 
 # Менюшки
 def menu():
 	# ГЛАВНОЕ МЕНЮ
 	global OPERATION
 	pygame.draw.rect(rc_root, (0, 0, 0), pygame.Rect(25, (cfg.window.HEIGHT - (cfg.window.HEIGHT / 4)), (cfg.window.WIDTH - 50), ((cfg.window.HEIGHT / 4) - 25)))
+	rc_root.blit(
+		pygame.transform.scale(
+			pygame.image.load(
+				f'image{prefix_path}world.png'), 
+				(
+					(int(cfg.window.HEIGHT / 4) - 50), 
+					(int(cfg.window.HEIGHT / 4) - 50)
+				)), 
+				(50, ((cfg.window.HEIGHT - (cfg.window.HEIGHT / 4)) + 15) )
+		)
 
 # Переменые для определения менюшки
 OPERATION = menu
