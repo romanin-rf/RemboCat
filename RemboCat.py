@@ -36,16 +36,36 @@ class cfg:
 	class info:
 		VERSION = rcb.info.VERSION
 		VERSION_INT = rcb.info.VERSION_INT
+	class setting:
+		LOOK_FPS = cfgd["LOOK_FPS"]
 	MAX_FPS = cfgd["MAX_FPS"]
 
 if "-debag" in sys.argv:
 	print(f"WINDOW:\n\tTITLE: \"{cfg.window.TITLE}\"\n\tSIZE: {cfg.window.WIDTH}x{cfg.window.HEIGHT}\nINFO:\n\tVERSION: {cfg.info.VERSION} ({cfg.info.VERSION_INT})")
+
+# Функции для работы
+def fps_handler(fps: float):
+	if fps >= 100:
+		fps_str = str(fps)[:6]
+	else:
+		fps_str = str(fps)[:5]
+	return fps_str
 
 # Основа
 rc_root = pygame.display.set_mode((cfg.window.WIDTH, cfg.window.HEIGHT))
 pygame.display.set_caption(cfg.window.TITLE + " v" + str(cfg.info.VERSION))
 clock = pygame.time.Clock()
 
+# Менюшки
+def menu():
+	# ГЛАВНОЕ МЕНЮ
+	global OPERATION
+	pygame.draw.rect(rc_root, (0, 0, 0), pygame.Rect(25, (cfg.window.HEIGHT - (cfg.window.HEIGHT / 4)), (cfg.window.WIDTH - 50), ((cfg.window.HEIGHT / 4) - 25)))
+
+# Переменые для определения менюшки
+OPERATION = menu
+
+# Начало работы
 running = True
 while running:
 	clock.tick(cfg.MAX_FPS)
@@ -53,4 +73,9 @@ while running:
 		if event.type == pygame.QUIT:
 			running = False
 	rc_root.fill((255, 255, 255))
-	pygame.display.flip()
+	# Логика работы
+	if cfg.setting.LOOK_FPS:
+		rc_root.blit(pygame.font.Font(None, 20).render( "FPS: " + str(fps_handler(clock.get_fps())), True, pygame.Color('black')), (0, 0))
+	OPERATION()
+	# Конец
+	pygame.display.update()
