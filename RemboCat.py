@@ -4,8 +4,11 @@ import json
 import pygame
 import random
 from threading import Thread
+# Дополнительные пакеты
 import rc_config.rcb as rcb
 import rc_LanguagePack.text_main.errors as LP_TEXT_ERRORS
+import rc_libs.func.wstr as WORK_STR
+import rc_libs.rc_engine as RC_ENGINE
 # Инициализация
 pygame.init()
 pygame.mixer.init()
@@ -41,57 +44,44 @@ class cfg:
 		LOOK_FPS = cfgd["LOOK_FPS"]
 	MAX_FPS = cfgd["MAX_FPS"]
 
+# Дополнительный костыль
 class temp:
-	running_check_fps = False
+	pass
 
+# Для проверки
 if "-debag" in sys.argv:
 	print("-" * 70)
 	print(f"WINDOW:\n\tTITLE: \"{cfg.window.TITLE}\"\n\tSIZE: {cfg.window.WIDTH}x{cfg.window.HEIGHT}\nINFO:\n\tVERSION: {cfg.info.VERSION} ({cfg.info.VERSION_INT})\nSETTING:\n\tLOOK_FPS: {cfg.setting.LOOK_FPS}\nOTHER:\n\tMAX_FPS: {cfg.MAX_FPS}")
 	print("-" * 70)
 
-# Функции для работы
-def fps_handler(fps: float):
-	if fps >= 100:
-		fps_str = str(fps)[:6]
-	else:
-		fps_str = str(fps)[:5]
-	return fps_str
-
 # Основа
 rc_root = pygame.display.set_mode((cfg.window.WIDTH, cfg.window.HEIGHT))
 pygame.display.set_caption(cfg.window.TITLE + " v" + str(cfg.info.VERSION))
-clock = pygame.time.Clock()		
+rc_clock = pygame.time.Clock()
 
 # Менюшки
 def menu():
 	# ГЛАВНОЕ МЕНЮ
 	global OPERATION
-	pygame.draw.rect(rc_root, (0, 0, 0), pygame.Rect(25, (cfg.window.HEIGHT - (cfg.window.HEIGHT / 4)), (cfg.window.WIDTH - 50), ((cfg.window.HEIGHT / 4) - 25)))
-	rc_root.blit(
-		pygame.transform.scale(
-			pygame.image.load(
-				f'image{prefix_path}world.png'), 
-				(
-					(int(cfg.window.HEIGHT / 4) - 50), 
-					(int(cfg.window.HEIGHT / 4) - 50)
-				)), 
-				(50, ((cfg.window.HEIGHT - (cfg.window.HEIGHT / 4)) + 15) )
-		)
+	RC_ENGINE.create_dialog(rc_root, (25, 123, 166), f'image{prefix_path}world.png', "[ГОЛОС]: Привет, мой друг! Давай познакомню тебя с этим миром! 1234567890-1234567890-123")
 
 # Переменые для определения менюшки
 OPERATION = menu
 
+# Инициализация движка
+RC_ENGINE.init(cfg.window.WIDTH, cfg.window.HEIGHT)
+
 # Начало работы
 running = True
 while running:
-	clock.tick(cfg.MAX_FPS)
+	rc_clock.tick(cfg.MAX_FPS)
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			running = False
 	rc_root.fill((255, 255, 255))
 	# Логика работы
 	if cfg.setting.LOOK_FPS:
-		rc_root.blit(pygame.font.Font(None, 20).render( "FPS: " + str(fps_handler(clock.get_fps())), True, pygame.Color('black')), (0, 0))
+		RC_ENGINE.fps_looker(rc_root, rc_clock,(0, 0))
 	OPERATION()
 	# Конец
 	pygame.display.update()
