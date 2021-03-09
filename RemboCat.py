@@ -63,7 +63,7 @@ rc_clock = pygame.time.Clock()
 def menu():
 	# ГЛАВНОЕ МЕНЮ
 	global OPERATION
-	RC_ENGINE.create_dialog(rc_root, (25, 123, 166), f'image{prefix_path}world.png', "[ГОЛОС]: Привет, мой друг! Давай познакомню тебя с этим миром! 1234567890-1234567890-123")
+	RC_ENGINE.create_dialog(rc_root, (25, 123, 166), f'image{prefix_path}world.png', "[ГОЛОС]: Привет, мой друг! Давай познакомню тебя с этим миром!")
 
 # Переменые для определения менюшки
 OPERATION = menu
