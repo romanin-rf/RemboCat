@@ -3,12 +3,15 @@ import sys
 import json
 import pygame
 import random
+import tempfile
 from threading import Thread
 # Дополнительные пакеты
-import rc_config.rcb as rcb
+import rc_config.rcb as RCB
 import rc_LanguagePack.text_main.errors as LP_TEXT_ERRORS
 import rc_libs.func.wstr as WORK_STR
 import rc_libs.rc_engine as RC_ENGINE
+import rc_libs.rc_cryptor as RC_CRYPTOR
+import rc_LanguagePack.menu as LP_MENU
 # Инициализация
 pygame.init()
 pygame.mixer.init()
@@ -34,19 +37,23 @@ except:
 # Конфирурации
 class cfg:
 	class window:
-		TITLE = rcb.root.window.TITLE
+		TITLE = RCB.root.window.TITLE
 		WIDTH = cfgd["ROOT"]["WIDTH"]
 		HEIGHT = cfgd["ROOT"]["HEIGHT"]
 	class info:
-		VERSION = rcb.info.VERSION
-		VERSION_INT = rcb.info.VERSION_INT
+		VERSION = RCB.info.VERSION
+		VERSION_INT = RCB.info.VERSION_INT
 	class setting:
 		LOOK_FPS = cfgd["LOOK_FPS"]
 	MAX_FPS = cfgd["MAX_FPS"]
 
-# Дополнительный костыль
-class temp:
-	pass
+class TEMP:
+	class in_ram:
+		pass
+	if not("rc_TEMP" in os.listdir()):
+		os.mkdir((str(os.getcwd()) + f"{prefix_path}rc_TEMP"))
+	GraphicsData = tempfile.NamedTemporaryFile(dir = (str(os.getcwd()) + f"{prefix_path}rc_TEMP"))
+	TimeData = tempfile.NamedTemporaryFile(dir = (str(os.getcwd()) + f"{prefix_path}rc_TEMP"))
 
 # Для проверки
 if "-debag" in sys.argv:
@@ -62,14 +69,45 @@ rc_clock = pygame.time.Clock()
 # Менюшки
 def menu():
 	# ГЛАВНОЕ МЕНЮ
-	global OPERATION
-	RC_ENGINE.create_dialog(rc_root, (25, 123, 166), f'image{prefix_path}world.png', "[ГОЛОС]: Привет, мой друг! Давай познакомню тебя с этим миром!")
+	global OPERATION, TEMP
+	if ("WELCOME" in dir(TEMP.in_ram)) and ((TEMP.in_ram.WELCOME / cfg.MAX_FPS) < 15):
+		TEMP.in_ram.WELCOME += 1
+	else:
+		if not("WELCOME" in dir(TEMP.in_ram)):
+			TEMP.in_ram.WELCOME = 0
+	if (TEMP.in_ram.WELCOME / cfg.MAX_FPS) < 3:
+		RC_ENGINE.create_dialog(rc_root, (25, 123, 166), f'image{prefix_path}world.png', str(LP_MENU.WELCOME1))
+	elif (TEMP.in_ram.WELCOME / cfg.MAX_FPS) < 6:
+		RC_ENGINE.create_dialog(rc_root, (25, 123, 166), f'image{prefix_path}world.png', str(LP_MENU.WELCOME2))
+	elif (TEMP.in_ram.WELCOME / cfg.MAX_FPS) < 9:
+		RC_ENGINE.create_dialog(rc_root, (25, 123, 166), f'image{prefix_path}world.png', str(LP_MENU.WELCOME3))
+	elif (TEMP.in_ram.WELCOME / cfg.MAX_FPS) < 12:
+		RC_ENGINE.create_dialog(rc_root, (25, 123, 166), f'image{prefix_path}world.png', str(LP_MENU.WELCOME4))
+	elif (TEMP.in_ram.WELCOME / cfg.MAX_FPS) < 15:
+		RC_ENGINE.create_dialog(rc_root, (25, 123, 166), f'image{prefix_path}world.png', str(LP_MENU.WELCOME5))
+	else:
+		pass
 
 # Переменые для определения менюшки
 OPERATION = menu
 
 # Инициализация движка
 RC_ENGINE.init(cfg.window.WIDTH, cfg.window.HEIGHT)
+if "-debag" in sys.argv:
+	WORK_out_user_commands = True
+	def out_user_commands(data: tuple):
+		global cfg, rc_root, rc_clock
+		while WORK_out_user_commands:
+			command = str(input(">>> "))
+			try:
+				out = eval(command)
+			except:
+				try:
+					out = exec(command)
+				except:
+					out = "Error command..."
+			print(out)
+	Thread(target = out_user_commands, args = ((),), daemon = True).start()
 
 # Начало работы
 running = True
@@ -81,7 +119,7 @@ while running:
 	rc_root.fill((255, 255, 255))
 	# Логика работы
 	if cfg.setting.LOOK_FPS:
-		RC_ENGINE.fps_looker(rc_root, rc_clock,(0, 0))
+		RC_ENGINE.fps_looker(rc_root, rc_clock, (0, 0))
 	OPERATION()
 	# Конец
 	pygame.display.update()
