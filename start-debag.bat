@@ -1,4 +1,4 @@
 @echo off
 cls
-%CD%\engine\win32\python.exe RemboCat.py -debag
+engine\win32\python.exe RemboCat.py -debag
 pause
