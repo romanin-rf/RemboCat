@@ -1,4 +1,4 @@
 @echo off
 cls
-engine\win32\python.exe" RemboCat.py
+start "engine\win32\pythonw.exe" RemboCat.py
 exit
