@@ -52,7 +52,11 @@ class TEMP:
 		pass
 	if not("rc_TEMP" in os.listdir()):
 		os.mkdir((str(os.getcwd()) + f"{prefix_path}rc_TEMP"))
-	GraphicsData = tempfile.NamedTemporaryFile(dir = (str(os.getcwd()) + f"{prefix_path}rc_TEMP"))
+	if not("graphics" in os.listdir("rc_TEMP")):
+		os.mkdir((str(os.getcwd()) + f"{prefix_path}rc_TEMP{prefix_path}graphics"))
+	class Graphics:
+		# Image = tempfile.NamedTemporaryFile(dir = (str(os.getcwd()) + f"{prefix_path}rc_TEMP{prefix_path}graphics"))
+		pass
 	TimeData = tempfile.NamedTemporaryFile(dir = (str(os.getcwd()) + f"{prefix_path}rc_TEMP"))
 
 # Для проверки
@@ -75,16 +79,20 @@ def menu():
 	else:
 		if not("WELCOME" in dir(TEMP.in_ram)):
 			TEMP.in_ram.WELCOME = 0
+	
+	if not("IMAGE_WORLD" in dir(TEMP.in_ram)):
+		TEMP.in_ram.IMAGE_WORLD = pygame.image.load(f'image{prefix_path}world.png')
+
 	if (TEMP.in_ram.WELCOME / cfg.MAX_FPS) < 3:
-		RC_ENGINE.create_dialog(rc_root, (25, 123, 166), f'image{prefix_path}world.png', str(LP_MENU.WELCOME1))
+		RC_ENGINE.create_dialog(rc_root, (25, 123, 166), TEMP.in_ram.IMAGE_WORLD, str(LP_MENU.WELCOME1))
 	elif (TEMP.in_ram.WELCOME / cfg.MAX_FPS) < 6:
-		RC_ENGINE.create_dialog(rc_root, (25, 123, 166), f'image{prefix_path}world.png', str(LP_MENU.WELCOME2))
+		RC_ENGINE.create_dialog(rc_root, (25, 123, 166), TEMP.in_ram.IMAGE_WORLD, str(LP_MENU.WELCOME2))
 	elif (TEMP.in_ram.WELCOME / cfg.MAX_FPS) < 9:
-		RC_ENGINE.create_dialog(rc_root, (25, 123, 166), f'image{prefix_path}world.png', str(LP_MENU.WELCOME3))
+		RC_ENGINE.create_dialog(rc_root, (25, 123, 166), TEMP.in_ram.IMAGE_WORLD, str(LP_MENU.WELCOME3))
 	elif (TEMP.in_ram.WELCOME / cfg.MAX_FPS) < 12:
-		RC_ENGINE.create_dialog(rc_root, (25, 123, 166), f'image{prefix_path}world.png', str(LP_MENU.WELCOME4))
+		RC_ENGINE.create_dialog(rc_root, (25, 123, 166), TEMP.in_ram.IMAGE_WORLD, str(LP_MENU.WELCOME4))
 	elif (TEMP.in_ram.WELCOME / cfg.MAX_FPS) < 15:
-		RC_ENGINE.create_dialog(rc_root, (25, 123, 166), f'image{prefix_path}world.png', str(LP_MENU.WELCOME5))
+		RC_ENGINE.create_dialog(rc_root, (25, 123, 166), TEMP.in_ram.IMAGE_WORLD, str(LP_MENU.WELCOME5))
 	else:
 		pass
 
@@ -95,7 +103,7 @@ OPERATION = menu
 RC_ENGINE.init(cfg.window.WIDTH, cfg.window.HEIGHT)
 if "-debag" in sys.argv:
 	WORK_out_user_commands = True
-	def out_user_commands(data: tuple):
+	def out_user_commands():
 		global cfg, rc_root, rc_clock
 		while WORK_out_user_commands:
 			command = str(input(">>> "))
@@ -107,7 +115,7 @@ if "-debag" in sys.argv:
 				except:
 					out = "Error command..."
 			print(out)
-	Thread(target = out_user_commands, args = ((),), daemon = True).start()
+	Thread(target = out_user_commands, args = (), daemon = True).start()
 
 # Начало работы
 running = True

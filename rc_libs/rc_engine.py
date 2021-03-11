@@ -28,7 +28,7 @@ def init(WIDTH: int, HEIGHT: int):
 def fps_looker(root, clock, pos: tuple, color_fg = pygame.Color('black')):
 	root.blit(pygame.font.Font(None, 20).render( "FPS: " + str(clock.get_fps())[:6], True, color_fg), pos)
 
-def create_dialog(root, color_bg: tuple, fileicon_path: str, text: str, color_fg = pygame.Color('black')):
+def create_dialog(root, color_bg: tuple, fileicon, text: str, color_fg = pygame.Color('black')):
 	pygame.draw.rect(root, color_bg, pygame.Rect(settings.pos_dialog.RECT[0][0], settings.pos_dialog.RECT[0][1], settings.pos_dialog.RECT[1][0], settings.pos_dialog.RECT[1][1]))
-	root.blit(pygame.transform.scale(pygame.image.load(fileicon_path), (settings.pos_dialog.IMAGE[0][0], settings.pos_dialog.IMAGE[0][1])), (settings.pos_dialog.IMAGE[1][0], settings.pos_dialog.IMAGE[1][1]))
+	root.blit(pygame.transform.scale(fileicon, (settings.pos_dialog.IMAGE[0][0], settings.pos_dialog.IMAGE[0][1])), (settings.pos_dialog.IMAGE[1][0], settings.pos_dialog.IMAGE[1][1]))
 	root.blit(pygame.font.Font(None, 24).render(text, True, color_fg), (settings.pos_dialog.TEXT[0][0], settings.pos_dialog.TEXT[0][1]))
