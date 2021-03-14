@@ -5,25 +5,23 @@ import pygame
 import random
 import tempfile
 from threading import Thread
-# Дополнительные пакеты
+# Дополнительные пакеты (конфигурации)
 import rc_config.rcb as RCB
 import rc_LanguagePack.text_main.errors as LP_TEXT_ERRORS
+import rc_LanguagePack.menu as LP_MENU
+# Дополнительные пакеты (библеотеки)
 import rc_libs.func.wstr as WORK_STR
 import rc_libs.rc_engine as RC_ENGINE
 import rc_libs.rc_cryptor as RC_CRYPTOR
-import rc_LanguagePack.menu as LP_MENU
-# Инициализация
+import rc_libs.func.osworks as OSWORKS
+# Инициализация пакетов pygame
 pygame.init()
 pygame.mixer.init()
 
 # Дополнительная настройка
-if sys.platform == "win32":
-	prefix_path = "\\"
-	import ctypes
-elif sys.platform == "linux":
-	prefix_path = "/"
-else:
-	exit()
+prefix_path = OSWORKS.check_prefix()
+if prefix_path == None:
+	raise OSError(LP_TEXT_ERRORS.RAISE_ERROR_CHECK_PREFIX_OS)
 
 # Загрузка конфигураций
 try:
@@ -63,7 +61,6 @@ class TEMP:
 if "-debag" in sys.argv:
 	print("-" * 70)
 	print(f"WINDOW:\n\tTITLE: \"{cfg.window.TITLE}\"\n\tSIZE: {cfg.window.WIDTH}x{cfg.window.HEIGHT}\nINFO:\n\tVERSION: {cfg.info.VERSION} ({cfg.info.VERSION_INT})\nSETTING:\n\tLOOK_FPS: {cfg.setting.LOOK_FPS}\nOTHER:\n\tMAX_FPS: {cfg.MAX_FPS}")
-	print("-" * 70)
 
 # Основа
 rc_root = pygame.display.set_mode((cfg.window.WIDTH, cfg.window.HEIGHT))
@@ -101,7 +98,11 @@ OPERATION = menu
 
 # Инициализация движка
 RC_ENGINE.init(cfg.window.WIDTH, cfg.window.HEIGHT)
+
+# Дополнительно для дебага
 if "-debag" in sys.argv:
+	print(f"\tENVIRONMENT: {dir()}")
+	print("-" * 70)
 	WORK_out_user_commands = True
 	def out_user_commands():
 		global cfg, rc_root, rc_clock
@@ -116,6 +117,7 @@ if "-debag" in sys.argv:
 					out = "Error command..."
 			print(out)
 	Thread(target = out_user_commands, args = (), daemon = True).start()
+
 
 # Начало работы
 running = True
