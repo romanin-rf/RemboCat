@@ -1,3 +1,6 @@
+import string
+import random
+
 def line_break(text: str, max_char: int, chrr = "\n"):
 	count = int(len(text) / max_char) + 1
 	wag = 1
@@ -10,3 +13,6 @@ def line_break(text: str, max_char: int, chrr = "\n"):
 		count -= 1
 		wag += 1
 	return done_list
+
+def generate_str(size):
+	return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(size))
